@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "test:watch": "jest --watchAll",
+    "test:watch": "jest --watch",
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
+    "autoformat": "npm run lint && npm run format",
     "instructions": "mdx-deck instructions.mdx"
   },
   "author": "",
