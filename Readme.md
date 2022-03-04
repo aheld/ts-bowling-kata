@@ -14,11 +14,14 @@ Boilerplate for [UncleBob's BowlingKata](http://butunclebob.com/ArticleS.UncleBo
 8. Refactor
 9. GoTo 5
 
+Every now and then run `npm run autoformat` 
+
 note - if you can't easily write code to make a test pass, then go backwards.
 Remove the failing test, then Refactor, the add the test back.
 
 Don't forget to refactor tests, using production code to make sure that tests are still valid. 
 
-open [presentation.md](http://aheld.github.io/bowling-score/) in a browser for step by step directions
+open [instructions.mdx](https://aheld.github.io/ts-bowling-kata/public/) 
+Run `npm run instructions` to view instructions locally in a browser, but its really not worth the compile time. 
 
 ## No reading ahead!
