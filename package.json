@@ -2,9 +2,8 @@
   "name": "ts-bowling-score",
   "version": "0.0.1",
   "description": "Typescript bowling kata",
-  "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
     "test:watch": "jest --watch",
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
@@ -12,7 +11,6 @@
     "instructions": "reveal-md instructions.md",
     "instructions:build": "reveal-md instructions.md --static public/"
   },
-  "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^27.4.1",
