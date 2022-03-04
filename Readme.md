@@ -22,6 +22,7 @@ Remove the failing test, then Refactor, the add the test back.
 Don't forget to refactor tests, using production code to make sure that tests are still valid. 
 
 open [instructions.mdx](https://aheld.github.io/ts-bowling-kata/public/) 
-Run `npm run instructions` to view instructions locally in a browser, but its really not worth the compile time. 
+Run `npm run instructions` to view instructions locally in a browser 
+Run `npm run instructions:build` to build instructions (gh-pages branch has to be manually updated)
 
 ## No reading ahead!
