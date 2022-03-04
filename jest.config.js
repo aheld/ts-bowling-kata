@@ -8,6 +8,6 @@ module.exports = {
     },
   },
   testEnvironment: 'node',
-  testMatch: ['<rootDir>/src/**/*.spec.ts'],
+  testMatch: ['<rootDir>/src/**/*.spec.ts', '<rootDir>/tests/**/*.spec.ts'],
   maxWorkers: '1',
 }
