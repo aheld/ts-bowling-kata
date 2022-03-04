@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <title>reveal-md</title>
+    <link rel="shortcut icon" href="./favicon.ico" />
+    <link rel="stylesheet" href="./dist/reset.css" />
+    <link rel="stylesheet" href="./dist/reveal.css" />
+    <link rel="stylesheet" href="./dist/theme/black.css" id="theme" />
+    <link rel="stylesheet" href="./css/highlight/zenburn.css" />
+
+
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides"><section  data-markdown><script type="text/template"># Bowling Kata
+</script></section><section  data-markdown><script type="text/template">
+# How to score Bowling
+
+http://en.wikipedia.org/wiki/Ten-pin_bowling
+
+![Bowling Frame](http://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Bowlstrike.PNG/330px-Bowlstrike.PNG)
+</script></section><section  data-markdown><script type="text/template">
+# External API
+
+- call roll for each roll
+- calculate score at the end
+- Assume good inputs (rolls always equal a full game)
+
+```
+    +--------------------+
+    | Game               |
+    | ------------------ |
+    | + roll(pins : int) |
+    | + score() : int    |
+    +--------------------+
+```
+</script></section><section  data-markdown><script type="text/template">
+# Gutter Game
+    
+Given a standard game of bowling  
+When 20 rolls are 0 (gutter ball)  
+Then the score should be 0  
+
+```typescript
+test('Gutter Game (all zeros)', () => {
+    for (let i = 0; i < 20; i++) game.roll(0)
+    expect(game.score()).toBe(0)
+  })
+```
+</script></section><section  data-markdown><script type="text/template">
+# Passing code
+
+```typescript
+  score(): number {
+    return 0
+  }
+```
+</script></section><section  data-markdown><script type="text/template">
+# Simple games
+    
+Given a standard game of bowling  
+When 20 rolls are 1  
+Then the score should be 20  
+
+```typescript
+for (i; i < 20; i ++) {
+    game.roll(1);
+}
+game.score().should.equal(20);
+```
+</script></section><section  data-markdown><script type="text/template">
+# Passing code
+
+```typescript
+  roll(roll: number) {
+    total += roll
+  }
+
+  score(): number {
+    return total
+  }
+```
+</script></section><section  data-markdown><script type="text/template">
+# Refactor Tests
+
+## Always be stable!
+
+Use *Working Code* as tests for test code
+
+- Condense ``for`` loops into ``rollMany``
+- Does this belong in Production code OR Test code?
+```typescript
+    game.rollMany(20, 0) //roll 20 zeros
+    rollMany(game, 20, 0) //roll 20 zeros
+```
+</script></section><section  data-markdown><script type="text/template">
+# Sum games
+
+```cucumber
+Given a standard game of bowling  
+When all roll are less than 5  
+When I roll a <rollA> 10 times
+When I roll a <rollB> 10 times
+Then the score is the sum of the rolls <score>
+
+Examples:
+| rollA | rollB | score |
+| 0     | 0     | 0     |
+| 3     | 4     | 70    |
+| 4     | 5     | 90    |
+```
+</script></section><section  data-markdown><script type="text/template">
+# Game with a single spare
+
+if we roll a 5 three times, and then all zeros the score should be 20
+```
+- roll '5' 3 times
+- roll '0' 17 times
+    - Score should be 20
+```
+You may need to remove this test, refactor, then procede 
+</script></section><section  data-markdown><script type="text/template">
+# Possible object model
+
+```
+                          Next Frame
+                          ┌─────────┐
+┌─────────────────┐    ┌──┴─────────▼────┐     ┌───────────┐
+│Game             │    │Frame            │     │Roll       │
+├─────────────────┤ 10 ├─────────────────┤ 1..2├───────────┤
+│+ roll(pins: int)├───►│+ score(): int   ├────►│- pin: int │
+│+ score(): int   │    │                 │     │           │
+└─────────────────┘    └─────────────────┘     └───────────┘
+                              ▲                     ▲
+                              │ subclass            │ 1
+                      ┌───────┴────────┐            │
+                      │  Tenth Frame   │            │
+                      │                ├────────────┘
+                      └────────────────┘  Extra Roll
+                      
+```
+</script></section><section  data-markdown><script type="text/template">
+# Game with a single strike
+
+if we roll a Strike , then a 3 two times, and then all zeros the score should be 16
+
+    - roll '10' one time
+    - roll '3' two times
+    - roll '0' 16 times
+        - Score should be 22
+</script></section><section  data-markdown><script type="text/template">
+# Game with mixed strikes and spares
+
+Rolls:
+3,4,6,4,7,1,4,5,10,4,6,10,10,10,5,5,3 = 169
+</script></section><section  data-markdown><script type="text/template">
+# New Requirement!
+
+## Bad input!
+
+    - Throw an exception if score is called
+      and you don't have a complete game
+</script></section><section  data-markdown><script type="text/template">
+# New Requirement!
+
+## Per frame scoring
+
+    - be able to call score at any time and 
+      return the current score
+    - return known score if current frame 
+      cannot be scored
+</script></section><section  data-markdown><script type="text/template">
+# New Requirement!
+
+## Kids bowling
+
+    - GutterBalls are not allowed
+    - All rolls of 0 are re-rolled
+    - Kid bolwing will be indicated by the caller
+     (constructor arg?)
+ </script></section><section  data-markdown><script type="text/template">
+# New Requirement!
+
+## Drunk bowling
+
+    - Any 4 consecutive rolls of zero is
+      considered a drunk player
+    - Drunk players have thier score tallied
+      immediately and game ends
+ </script></section><section  data-markdown><script type="text/template">
+# New Requirement!
+
+## Klingon Bowling
+
+    - Each frame gets 3 rolls
+    - the lowest roll is considered ghojwI'
+      and is not counted
+    - two consective 0 rolls earns a bIj of -10
+
+Klingons do not deliver software  
+They execute requirements  
+</script></section><section  data-markdown><script type="text/template">
+# Temporial Bowling
+
+    - Check the time when you start a game
+    - if the time is < Noon, then 
+      score according to kids bowling 
+
+    - if the time is > 10pm, then 
+      score according to the drunk bowling 
+
+    - if the time is a pallendrome, then 
+      score according to klingon bowling 
+</script></section><section  data-markdown><script type="text/template">
+# Credits
+
+- Object Model diagram and inspiration from this post: 
+http://pixelhandler.com/posts/bowling-game-kata-using-mocha-bdd-test-framework-and-yeoman
+
+- Unclebob's original post
+http://butunclebob.com/ArticleS.UncleBob.TheBowlingGameKata</script></section></div>
+    </div>
+
+    <script src="./dist/reveal.js"></script>
+
+    <script src="./plugin/markdown/markdown.js"></script>
+    <script src="./plugin/highlight/highlight.js"></script>
+    <script src="./plugin/zoom/zoom.js"></script>
+    <script src="./plugin/notes/notes.js"></script>
+    <script src="./plugin/math/math.js"></script>
+    <script>
+      function extend() {
+        var target = {};
+        for (var i = 0; i < arguments.length; i++) {
+          var source = arguments[i];
+          for (var key in source) {
+            if (source.hasOwnProperty(key)) {
+              target[key] = source[key];
+            }
+          }
+        }
+        return target;
+      }
+
+      // default options to init reveal.js
+      var defaultOptions = {
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        plugins: [
+          RevealMarkdown,
+          RevealHighlight,
+          RevealZoom,
+          RevealNotes,
+          RevealMath
+        ]
+      };
+
+      // options from URL query string
+      var queryOptions = Reveal().getQueryHash() || {};
+
+      var options = extend(defaultOptions, {}, queryOptions);
+    </script>
+
+
+    <script>
+      Reveal.initialize(options);
+    </script>
+  </body>
+</html>
